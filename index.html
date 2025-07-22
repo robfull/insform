@@ -3,1512 +3,932 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Marine Insurance Application</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <title>Marine Insurance Application</title>
     <style>
-        :root {
-            --primary: #007AFF;
-            --primary-light: #4FC3F7;
-            --success: #34C759;
-            --background: #F2F2F7;
-            --surface: #FFFFFF;
-            --text: #000000;
-            --text-secondary: #8E8E93;
-            --border: #E5E5EA;
-        }
-
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--background);
-            margin: 0;
-            padding: 0;
-            line-height: 1.5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1d1d1f;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
         }
 
         .progress-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            margin-bottom: 30px;
         }
 
-        .progress-container.hidden {
-            transform: translateY(-100%);
-            opacity: 0;
-        }
-
-        /* Mobile Progress Bar */
-        .mobile-progress {
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .mobile-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 2px;
-            transition: width 0.6s ease;
-            position: relative;
-        }
-
-        .mobile-progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 20px;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-20px); }
-            100% { transform: translateX(20px); }
-        }
-
-        /* Desktop Circular Progress */
-        .desktop-progress {
-            width: 80px;
-            height: 80px;
-            position: relative;
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-
-        .progress-ring-circle {
-            stroke: var(--border);
-            stroke-width: 6;
-            fill: transparent;
-            r: 35;
-            cx: 40;
-            cy: 40;
-        }
-
-        .progress-ring-progress {
-            stroke: var(--primary);
-            stroke-width: 6;
-            fill: transparent;
-            r: 35;
-            cx: 40;
-            cy: 40;
-            stroke-dasharray: 220;
-            stroke-dashoffset: 220;
-            transition: stroke-dashoffset 0.6s ease;
-            stroke-linecap: round;
-        }
-
-        /* Step Indicators */
-        .step-indicator {
-            width: 8px;
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
             height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #34c759, #30d158);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: var(--border);
+            background: rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
         }
 
-        .step-indicator.active {
-            background: var(--primary);
+        .step-dot.active {
+            background: #34c759;
             transform: scale(1.2);
         }
 
-        .step-indicator.completed {
-            background: var(--success);
-            transform: scale(1.2);
+        .step-dot.completed {
+            background: #34c759;
         }
 
-        /* Form Sections */
-        .form-section {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        .form-section.active {
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(0,122,255,0.1);
-        }
-
-        .form-section.hidden {
+        .step {
             display: none;
+            animation: slideIn 0.3s ease-out;
         }
 
-        /* Input Styling */
-        .form-input {
+        .step.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1d1d1f;
+        }
+
+        .step-description {
+            color: #86868b;
+            font-size: 16px;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group.row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-group.row > div {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: #ff3b30;
+        }
+
+        input, select, textarea {
             width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid var(--border);
+            padding: 16px;
+            border: 2px solid #f5f5f7;
             border-radius: 12px;
             font-size: 16px;
+            background: #f9f9f9;
             transition: all 0.2s ease;
-            background: var(--surface);
+            -webkit-appearance: none;
         }
 
-        .form-input:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(0,122,255,0.1);
+            border-color: #007aff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
         }
 
-        .form-input.error {
-            border-color: #FF3B30;
-            box-shadow: 0 0 0 4px rgba(255,59,48,0.1);
+        .radio-group, .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
         }
 
-        /* Buttons */
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            padding: 12px 24px;
+        .radio-option, .checkbox-option {
+            position: relative;
+        }
+
+        .radio-option input, .checkbox-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-option label, .checkbox-option label {
+            display: block;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e7;
             border-radius: 12px;
+            background: #f9f9f9;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .radio-option input:checked + label, .checkbox-option input:checked + label {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
+        }
+
+        .actions {
+            margin-top: auto;
+            padding-top: 32px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 16px 24px;
             border: none;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: 16px;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #007aff;
+            color: white;
         }
 
         .btn-primary:hover {
-            background: #0056CC;
+            background: #0056b3;
             transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: var(--border);
-            color: var(--text);
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 16px;
+            background: #f5f5f7;
+            color: #86868b;
         }
 
         .btn-secondary:hover {
-            background: #D1D1D6;
+            background: #e5e5e7;
         }
 
-        /* Progress Text */
-        .progress-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
+        .btn-skip {
+            background: transparent;
+            color: #007aff;
+            border: 2px solid #007aff;
         }
 
-        .motivational-text {
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .form-section {
-                padding: 16px;
-                margin-bottom: 12px;
-                border-radius: 12px;
-            }
-
-            .desktop-progress {
-                display: none;
-            }
-
-            .progress-container {
-                padding: 8px 16px;
-            }
-
-            .mobile-progress-info {
-                font-size: 12px;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .mobile-progress-container {
-                display: none;
-            }
-        }
-
-        /* Celebration Animation */
-        @keyframes celebrate {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .celebration {
-            animation: celebrate 0.5s ease;
-        }
-
-        /* Touch/Swipe Styles */
-        .swipe-indicator {
+        .save-indicator {
             position: fixed;
-            top: 50%;
-            right: 16px;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.7);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(52, 199, 89, 0.9);
             color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
             opacity: 0;
             transition: opacity 0.3s ease;
-            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
-        .swipe-indicator.show {
+        .save-indicator.show {
             opacity: 1;
         }
 
-        .floating-progress {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: var(--surface);
-            border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 999;
+        .motivational-text {
+            text-align: center;
+            color: #34c759;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
         }
 
-        .floating-progress:hover {
-            transform: scale(1.1);
-        }
-
-        .floating-progress.hidden {
-            opacity: 0;
-            pointer-events: none;
+        @media (max-width: 375px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .form-container {
+                padding: 24px 20px;
+            }
+            
+            .step-title {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Progress Container -->
-    <div class="progress-container" id="progressContainer">
-        <!-- Mobile Progress -->
-        <div class="mobile-progress-container md:hidden">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center space-x-2">
-                    <span class="progress-text" id="mobileProgressText">Step 1 of 7</span>
-                    <span class="text-xs text-gray-500" id="mobileTimeEstimate">~4 min left</span>
-                </div>
-                <button id="progressToggle" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-chevron-down"></i>
-                </button>
+    <div class="container">
+        <header class="header">
+            <div class="logo">⚓ Marine Insurance</div>
+            <div class="subtitle">Protecting your vessel, securing your adventure</div>
+        </header>
+
+        <div class="progress-container">
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
             </div>
-            <div class="mobile-progress">
-                <div class="mobile-progress-fill" id="mobileProgressFill" style="width: 14%;"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 12.5%"></div>
             </div>
-            <div class="flex justify-between items-center mt-2">
-                <div class="flex space-x-1">
-                    <div class="step-indicator active" data-step="1"></div>
-                    <div class="step-indicator" data-step="2"></div>
-                    <div class="step-indicator" data-step="3"></div>
-                    <div class="step-indicator" data-step="4"></div>
-                    <div class="step-indicator" data-step="5"></div>
-                    <div class="step-indicator" data-step="6"></div>
-                    <div class="step-indicator" data-step="7"></div>
-                </div>
-                <div class="motivational-text" id="mobileMotivationalText">Great start! 🚢</div>
-            </div>
+            <div class="motivational-text">You're doing great! Keep going 🚤</div>
+            <div class="progress-text">Step 1 of 8 • Personal Information</div>
         </div>
 
-        <!-- Desktop Progress -->
-        <div class="desktop-progress-container hidden md:flex items-center justify-between p-4">
-            <div class="flex items-center space-x-4">
-                <div class="desktop-progress">
-                    <svg class="progress-ring">
-                        <circle class="progress-ring-circle"></circle>
-                        <circle class="progress-ring-progress" id="desktopProgressCircle"></circle>
-                    </svg>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="text-sm font-semibold text-primary" id="desktopProgressPercent">14%</span>
+        <form class="form-container" id="marineInsuranceForm">
+            <!-- Step 1: Personal Information -->
+            <div class="step active" id="step1">
+                <h2 class="step-title">Let's start with you</h2>
+                <p class="step-description">We need some basic information to get started on your marine insurance quote.</p>
+
+                <div class="form-group row">
+                    <div>
+                        <label>First Name <span class="required">*</span></label>
+                        <input type="text" name="firstName" required>
+                    </div>
+                    <div>
+                        <label>Last Name <span class="required">*</span></label>
+                        <input type="text" name="lastName" required>
                     </div>
                 </div>
-                <div>
-                    <div class="text-lg font-semibold" id="desktopProgressText">Personal Information</div>
-                    <div class="text-sm text-gray-500" id="desktopTimeEstimate">About 4 minutes remaining</div>
-                    <div class="text-sm text-primary font-medium" id="desktopMotivationalText">Great start! You're making excellent progress 🚢</div>
+
+                <div class="form-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <input type="email" name="email" required>
                 </div>
-            </div>
-            <div class="flex items-center space-x-2">
-                <div class="flex space-x-2">
-                    <div class="step-indicator active" data-step="1"></div>
-                    <div class="step-indicator" data-step="2"></div>
-                    <div class="step-indicator" data-step="3"></div>
-                    <div class="step-indicator" data-step="4"></div>
-                    <div class="step-indicator" data-step="5"></div>
-                    <div class="step-indicator" data-step="6"></div>
-                    <div class="step-indicator" data-step="7"></div>
+
+                <div class="form-group">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="tel" name="phone" required>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Floating Progress (Mobile) -->
-    <div class="floating-progress hidden" id="floatingProgress">
-        <div class="text-xs font-semibold text-primary" id="floatingProgressPercent">14%</div>
-    </div>
+                <div class="form-group">
+                    <label>Date of Birth <span class="required">*</span></label>
+                    <input type="date" name="dob" required>
+                </div>
 
-    <!-- Swipe Indicator -->
-    <div class="swipe-indicator" id="swipeIndicator">
-        Swipe up for progress
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-6 max-w-2xl">
-        <!-- Section 1: Personal Information -->
-        <div class="form-section active" id="section1">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-user text-blue-500 mr-2"></i>
-                    Personal Information
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="saveForm()">
-                        <i class="fas fa-save mr-1"></i>Save
-                    </button>
-                    <button class="btn-secondary" onclick="nextSection()">Skip</button>
+                <div class="form-group">
+                    <label>Occupation <span class="required">*</span></label>
+                    <input type="text" name="occupation" required>
                 </div>
             </div>
 
-            <div class="grid gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Name or LLC *</label>
-                    <input type="text" class="form-input" required id="name" placeholder="Enter your name or LLC">
+            <!-- Step 2: Address & Demographics -->
+            <div class="step" id="step2">
+                <h2 class="step-title">Where can we find you?</h2>
+                <p class="step-description">Your address helps us determine the right coverage and rates for your area.</p>
+
+                <div class="form-group">
+                    <label>Street Address <span class="required">*</span></label>
+                    <input type="text" name="address" required>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2">Address *</label>
-                    <input type="text" class="form-input mb-2" required placeholder="Street Address">
-                    <input type="text" class="form-input mb-2" placeholder="Street Address Line 2">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" class="form-input" placeholder="City">
-                        <input type="text" class="form-input" placeholder="State/Province">
-                    </div>
-                    <input type="text" class="form-input mt-2" placeholder="Postal/Zip Code">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Mailing Address (if different)</label>
-                    <textarea class="form-input" rows="3" placeholder="Enter mailing address if different from above"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Phone Number *</label>
-                    <input type="tel" class="form-input" required placeholder="(555) 123-4567">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Email Address *</label>
-                    <input type="email" class="form-input" required placeholder="your.email@example.com">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="form-group row">
                     <div>
-                        <label class="block text-sm font-medium mb-2">Occupation *</label>
-                        <input type="text" class="form-input" required placeholder="Your occupation">
+                        <label>City <span class="required">*</span></label>
+                        <input type="text" name="city" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">Date of Birth *</label>
-                        <input type="date" class="form-input" required>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Driver's License Number *</label>
-                    <input type="text" class="form-input" required placeholder="License number">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Marital Status</label>
-                        <select class="form-input">
-                            <option value="">Select status</option>
-                            <option value="single">Single</option>
-                            <option value="married">Married</option>
-                            <option value="divorced">Divorced</option>
-                            <option value="widowed">Widowed</option>
-                            <option value="separated">Separated</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Gender</label>
-                        <select class="form-input">
-                            <option value="">Select gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
+                        <label>State <span class="required">*</span></label>
+                        <select name="state" required>
+                            <option value="">Select State</option>
+                            <option value="FL">Florida</option>
+                            <option value="CA">California</option>
+                            <option value="TX">Texas</option>
+                            <!-- Add more states as needed -->
                         </select>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2">Homeownership</label>
-                    <select class="form-input">
-                        <option value="">Select option</option>
-                        <option value="own">Own home</option>
-                        <option value="rent">Rent home</option>
-                        <option value="parents">Live with parents</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="flex justify-end mt-6">
-                <button class="btn-primary" onclick="nextSection()">
-                    Next: Vessel Details
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 2: Vessel Details -->
-        <div class="form-section hidden" id="section2">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-ship text-blue-500 mr-2"></i>
-                    Vessel Details
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="prevSection()">Back</button>
-                    <button class="btn-secondary" onclick="saveForm()">Save</button>
-                    <button class="btn-secondary" onclick="nextSection()">Skip</button>
-                </div>
-            </div>
-
-            <div class="grid gap-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Year of Vessel *</label>
-                        <input type="number" class="form-input" required placeholder="2020">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Length of Vessel *</label>
-                        <input type="number" class="form-input" required placeholder="Length in feet">
-                    </div>
+                <div class="form-group">
+                    <label>ZIP Code <span class="required">*</span></label>
+                    <input type="text" name="zip" required>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Make of Vessel *</label>
-                        <input type="text" class="form-input" required placeholder="e.g., Boston Whaler">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Model of Vessel *</label>
-                        <input type="text" class="form-input" required placeholder="e.g., Outrage 320">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Hull ID Number</label>
-                    <input type="text" class="form-input" placeholder="Hull identification number">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Date of Purchase</label>
-                        <input type="date" class="form-input">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Purchase Price *</label>
-                        <input type="number" class="form-input" required placeholder="150000">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Will vessel be for sale within the next 3-6 months? *</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="forSale" value="yes" class="mr-2">
-                            Yes
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="forSale" value="no" class="mr-2">
-                            No
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Hull Material</label>
-                    <select class="form-input">
-                        <option value="">Select material</option>
-                        <option value="fiberglass">Fiberglass</option>
-                        <option value="aluminum">Aluminum</option>
-                        <option value="steel">Steel</option>
-                        <option value="wood">Wood</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Do you have a current survey?</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="survey" value="yes" class="mr-2">
-                            Yes
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="survey" value="no" class="mr-2">
-                            No
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="survey" value="getting" class="mr-2">
-                            Getting one
-                        </label>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">If yes, please send to taylor@stacksbrokerage.com</p>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-6">
-                <button class="btn-secondary" onclick="prevSection()">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Previous
-                </button>
-                <button class="btn-primary" onclick="nextSection()">
-                    Next: Engine Details
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 3: Engine Information -->
-        <div class="form-section hidden" id="section3">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-cog text-blue-500 mr-2"></i>
-                    Engine Information
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="prevSection()">Back</button>
-                    <button class="btn-secondary" onclick="saveForm()">Save</button>
-                    <button class="btn-secondary" onclick="nextSection()">Skip</button>
-                </div>
-            </div>
-
-            <div class="grid gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Number of Engines *</label>
-                    <select class="form-input" required>
-                        <option value="">Select number</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4+</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Make of Engines *</label>
-                        <input type="text" class="form-input" required placeholder="e.g., Mercury">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Model of Engines</label>
-                        <input type="text" class="form-input" placeholder="e.g., Verado">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Horsepower (Each Engine) *</label>
-                        <input type="number" class="form-input" required placeholder="300">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Model Year *</label>
-                        <input type="number" class="form-input" required placeholder="2020">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Type of Engine *</label>
-                    <select class="form-input" required>
-                        <option value="">Select type</option>
-                        <option value="outboard">Outboard</option>
-                        <option value="inboard">Inboard</option>
-                        <option value="sterndrive">Sterndrive</option>
-                        <option value="jet">Jet</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Fuel Type *</label>
-                    <select class="form-input" required>
-                        <option value="">Select fuel type</option>
-                        <option value="gasoline">Gasoline</option>
-                        <option value="diesel">Diesel</option>
-                        <option value="electric">Electric</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Engine Serial Numbers</label>
-                    <textarea class="form-input" rows="2" placeholder="If multiple engines, separate with '/' (slash)"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">GPS Tracking</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="gpsTracking" value="yes" class="mr-2">
-                            Yes
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="gpsTracking" value="no" class="mr-2">
-                            No
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-6">
-                <button class="btn-secondary" onclick="prevSection()">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Previous
-                </button>
-                <button class="btn-primary" onclick="nextSection()">
-                    Next: Experience & Safety
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 4: Experience & Safety -->
-        <div class="form-section hidden" id="section4">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
-                    Experience & Safety
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="prevSection()">Back</button>
-                    <button class="btn-secondary" onclick="saveForm()">Save</button>
-                    <button class="btn-secondary" onclick="nextSection()">Skip</button>
-                </div>
-            </div>
-
-            <div class="grid gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Have you owned or operated watercraft previously? *</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="previousExperience" value="owned" class="mr-2">
-                            Owned
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="previousExperience" value="operated" class="mr-2">
-                            Operated
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="previousExperience" value="both" class="mr-2">
-                            Both
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="previousExperience" value="no" class="mr-2">
-                            No
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Previous Watercraft Details</label>
-                    <textarea class="form-input" rows="3" placeholder="E.g., OWNED 24FT COBIA - 6YR, OPERATED FRIEND'S BOAT - 2YR"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Any claims or losses in the past 5 years? *</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="claims" value="yes" class="mr-2">
-                            Yes
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="claims" value="no" class="mr-2">
-                            No
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Safety Courses or Licenses</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="safetyCourses" value="uscg" class="mr-2">
-                            USCG Course
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="safetyCourses" value="powerSquadron" class="mr-2">
-                            Power Squadron
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="safetyCourses" value="captains" class="mr-2">
-                            Captain's License
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="safetyCourses" value="other" class="mr-2">
-                            Other
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Additional Experience Details</label>
-                    <textarea class="form-input" rows="2" placeholder="Any additional safety courses, certifications, or relevant experience"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Any Accidents or Tickets? *</label>
-                    <textarea class="form-input" rows="2" placeholder="DUI, major accidents, vehicular homicide, reckless driving, etc. Enter 'None' if none."></textarea>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-6">
-                <button class="btn-secondary" onclick="prevSection()">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Previous
-                </button>
-                <button class="btn-primary" onclick="nextSection()">
-                    Next: Usage & Storage
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 5: Usage & Storage -->
-        <div class="form-section hidden" id="section5">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-anchor text-blue-500 mr-2"></i>
-                    Usage & Storage
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="prevSection()">Back</button>
-                    <button class="btn-secondary" onclick="saveForm()">Save</button>
-                    <button class="btn-secondary" onclick="nextSection()">Skip</button>
-                </div>
-            </div>
-
-            <div class="grid gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">How will watercraft be used? *</label>
-                    <select class="form-input" required>
-                        <option value="">Select usage</option>
-                        <option value="private">Private</option>
-                        <option value="private_light_charter">Private with Light Charter</option>
-                        <option value="full_time_charter">Full Time Charter</option>
-                        <option value="charter_6pack">Charter (6-Pack)</option>
-                        <option value="live_aboard">Live-Aboard</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">How is watercraft stored? *</label>
-                    <textarea class="form-input" rows="2" placeholder="Describe storage method (marina, dry stack, trailer, etc.)" required></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Storage Location</label>
-                    <textarea class="form-input" rows="3" placeholder="Address where watercraft is kept (if different from home address). Include marina name if applicable."></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Distance from Home</label>
-                    <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="distance" value="local" class="mr-2">
-                            Within 4 hours / 150 miles of home
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="distance" value="distant" class="mr-2">
-                            More than 4 hours / 150 miles from home
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Business Operations</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="businessOps" value="yes" class="mr-2">
-                            Yes, I own/rent/operate a business
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="businessOps" value="no" class="mr-2">
-                            No business operations
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-6">
-                <button class="btn-secondary" onclick="prevSection()">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Previous
-                </button>
-                <button class="btn-primary" onclick="nextSection()">
-                    Next: Coverage Details
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 6: Coverage Requirements -->
-        <div class="form-section hidden" id="section6">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-umbrella text-blue-500 mr-2"></i>
-                    Coverage Requirements
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="prevSection()">Back</button>
-                    <button class="btn-secondary" onclick="saveForm()">Save</button>
-                    <button class="btn-secondary" onclick="nextSection()">Skip</button>
-                </div>
-            </div>
-
-            <div class="grid gap-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2">Insured Value of Watercraft (minus trailer) *</label>
-                    <input type="number" class="form-input" required placeholder="200000">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">P&I / Uninsured Boater Liability Limits *</label>
-                    <select class="form-input" required>
-                        <option value="">Select liability limit</option>
-                        <option value="300000">$300,000</option>
-                        <option value="500000">$500,000</option>
-                        <option value="1000000">$1,000,000</option>
-                        <option value="2000000">$2,000,000</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Medical Payments</label>
-                    <select class="form-input">
-                        <option value="">Select amount</option>
-                        <option value="5000">$5,000</option>
-                        <option value="10000">$10,000</option>
-                        <option value="25000">$25,000</option>
-                        <option value="50000">$50,000</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Personal Effects Coverage</label>
-                    <select class="form-input">
-                        <option value="">Select amount</option>
-                        <option value="1000">$1,000</option>
-                        <option value="2500">$2,500</option>
-                        <option value="5000">$5,000</option>
-                        <option value="10000">$10,000</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Bahamas Coverage Requested? *</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="bahamasCoverage" value="yes" class="mr-2">
-                            Yes
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="bahamasCoverage" value="no" class="mr-2">
-                            No
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Will watercraft be financed?</label>
-                    <textarea class="form-input" rows="2" placeholder="Specify bank name, or enter 'N/A' if unsure, or 'NO' if paying cash"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Additional Insured</label>
-                    <textarea class="form-input" rows="2" placeholder="Marina, family member, friend, etc. who need to be on the policy"></textarea>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-6">
-                <button class="btn-secondary" onclick="prevSection()">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Previous
-                </button>
-                <button class="btn-primary" onclick="nextSection()">
-                    Final Details
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 7: Additional Information -->
-        <div class="form-section hidden" id="section7">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    <i class="fas fa-clipboard-check text-blue-500 mr-2"></i>
-                    Final Details
-                </h2>
-                <div class="flex space-x-2">
-                    <button class="btn-secondary" onclick="prevSection()">Back</button>
-                    <button class="btn-secondary" onclick="saveForm()">Save</button>
-                </div>
-            </div>
-
-            <div class="grid gap-4">
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="font-semibold mb-3">Trailer Insurance</h3>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Would you like your trailer insured? *</label>
-                        <div class="flex space-x-4 mb-4">
-                            <label class="flex items-center">
-                                <input type="radio" name="trailerInsurance" value="yes" class="mr-2" onchange="toggleTrailerFields(true)">
-                                Yes
-                            </label>
-                            <label class="flex items-center">
-                                <input type="radio" name="trailerInsurance" value="no" class="mr-2" onchange="toggleTrailerFields(false)">
-                                No
-                            </label>
+                <div class="form-group">
+                    <label>Marital Status</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="maritalStatus" value="single" id="single">
+                            <label for="single">Single</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="maritalStatus" value="married" id="married">
+                            <label for="married">Married</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="maritalStatus" value="divorced" id="divorced">
+                            <label for="divorced">Divorced</label>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div id="trailerFields" class="hidden grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Make of Trailer</label>
-                            <input type="text" class="form-input" placeholder="e.g., Load Rite">
+            <!-- Step 3: Vessel Information -->
+            <div class="step" id="step3">
+                <h2 class="step-title">Tell us about your vessel</h2>
+                <p class="step-description">Basic details about your boat help us provide accurate coverage options.</p>
+
+                <div class="form-group row">
+                    <div>
+                        <label>Year <span class="required">*</span></label>
+                        <input type="number" name="vesselYear" min="1950" max="2025" required>
+                    </div>
+                    <div>
+                        <label>Length (ft) <span class="required">*</span></label>
+                        <input type="number" name="vesselLength" min="10" max="200" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Make <span class="required">*</span></label>
+                    <input type="text" name="vesselMake" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Model <span class="required">*</span></label>
+                    <input type="text" name="vesselModel" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Hull ID Number <span class="required">*</span></label>
+                    <input type="text" name="hullId" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Purchase Price <span class="required">*</span></label>
+                    <input type="number" name="purchasePrice" min="1000" required>
+                </div>
+            </div>
+
+            <!-- Step 4: Engine Details -->
+            <div class="step" id="step4">
+                <h2 class="step-title">Engine specifications</h2>
+                <p class="step-description">Engine details affect both performance ratings and insurance coverage.</p>
+
+                <div class="form-group">
+                    <label>Number of Engines <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="numEngines" value="1" id="eng1">
+                            <label for="eng1">1</label>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Year of Trailer</label>
-                            <input type="number" class="form-input" placeholder="2020">
+                        <div class="radio-option">
+                            <input type="radio" name="numEngines" value="2" id="eng2">
+                            <label for="eng2">2</label>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Value of Trailer</label>
-                            <input type="number" class="form-input" placeholder="15000">
+                        <div class="radio-option">
+                            <input type="radio" name="numEngines" value="3" id="eng3">
+                            <label for="eng3">3</label>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2">Serial Number</label>
-                            <input type="text" class="form-input" placeholder="Trailer serial number">
+                        <div class="radio-option">
+                            <input type="radio" name="numEngines" value="4" id="eng4">
+                            <label for="eng4">4+</label>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2">Best Time to Reach You</label>
-                    <input type="text" class="form-input" placeholder="e.g., Weekdays 9AM-5PM, Evenings after 6PM">
+                <div class="form-group">
+                    <label>Engine Make <span class="required">*</span></label>
+                    <input type="text" name="engineMake" required>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2">How did you hear about us?</label>
-                    <textarea class="form-input" rows="2" placeholder="How did you hear about us? Current insurance carrier? How much are you currently paying?"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Additional Comments</label>
-                    <textarea class="form-input" rows="3" placeholder="Any additional comments, coverage requests, or questions?"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Bundle Insurance Options</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="bundleOptions" value="auto" class="mr-2">
-                            Auto Insurance
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="bundleOptions" value="home" class="mr-2">
-                            Home Insurance
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="bundleOptions" value="business" class="mr-2">
-                            Business Insurance
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" name="bundleOptions" value="jewelry" class="mr-2">
-                            Jewelry Insurance
-                        </label>
+                <div class="form-group row">
+                    <div>
+                        <label>Horsepower (each) <span class="required">*</span></label>
+                        <input type="number" name="horsepower" min="10" max="1000" required>
+                    </div>
+                    <div>
+                        <label>Engine Year <span class="required">*</span></label>
+                        <input type="number" name="engineYear" min="1980" max="2025" required>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-2">Which Agent Assisted You?</label>
-                    <input type="text" class="form-input" placeholder="Agent name (if applicable)">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Agency Name</label>
-                    <input type="text" class="form-input" placeholder="Agency name (if applicable)">
-                </div>
-
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <label class="flex items-start">
-                        <input type="checkbox" name="smsOptIn" class="mr-3 mt-1">
-                        <span class="text-sm">
-                            <strong>SMS Opt-In:</strong> Yes! Stacks Brokerage may text me throughout the insurance quoting, servicing, claims, and renewal processes.
-                        </span>
-                    </label>
+                <div class="form-group">
+                    <label>Engine Type <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="engineType" value="outboard" id="outboard">
+                            <label for="outboard">Outboard</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="engineType" value="inboard" id="inboard">
+                            <label for="inboard">Inboard</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="engineType" value="io" id="io">
+                            <label for="io">I/O</label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex justify-between mt-8">
-                <button class="btn-secondary" onclick="prevSection()">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Previous
-                </button>
-                <button class="btn-primary text-lg px-8 py-3" onclick="submitForm()">
-                    <i class="fas fa-paper-plane mr-2"></i>
-                    Submit Application
-                </button>
-            </div>
-        </div>
+            <!-- Step 5: Experience & History -->
+            <div class="step" id="step5">
+                <h2 class="step-title">Your boating experience</h2>
+                <p class="step-description">Experience and safety history help us offer better rates and coverage.</p>
 
-        <!-- Success Message -->
-        <div class="form-section hidden" id="successSection">
-            <div class="text-center py-12">
-                <div class="text-6xl mb-6">🎉</div>
-                <h2 class="text-3xl font-bold text-green-600 mb-4">Application Submitted!</h2>
-                <p class="text-lg text-gray-600 mb-6">
-                    Thank you for completing your marine insurance application. 
-                    We'll review your information and get back to you with a quote soon.
-                </p>
-                <div class="bg-green-50 p-6 rounded-lg mb-6">
-                    <h3 class="font-semibold text-green-800 mb-2">What's Next?</h3>
-                    <ul class="text-left text-green-700 space-y-1">
-                        <li>• We'll review your application within 24 hours</li>
-                        <li>• You'll receive a personalized quote via email</li>
-                        <li>• Our team may contact you for any additional information</li>
-                        <li>• Questions? Call us at (555) 123-4567</li>
-                    </ul>
+                <div class="form-group">
+                    <label>Previous Watercraft Experience <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="experience" value="owned" id="owned">
+                            <label for="owned">Owned</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="experience" value="operated" id="operated">
+                            <label for="operated">Operated</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="experience" value="both" id="both">
+                            <label for="both">Both</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="experience" value="none" id="none">
+                            <label for="none">None</label>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-primary" onclick="resetForm()">
-                    Submit Another Application
-                </button>
+
+                <div class="form-group">
+                    <label>Any claims in the past 5 years? <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="claims" value="yes" id="claimsYes">
+                            <label for="claimsYes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="claims" value="no" id="claimsNo">
+                            <label for="claimsNo">No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Safety Courses or Licenses</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="safety[]" value="uscg" id="uscg">
+                            <label for="uscg">USCG Course</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="safety[]" value="captain" id="captain">
+                            <label for="captain">Captain's License</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="safety[]" value="squadron" id="squadron">
+                            <label for="squadron">Power Squadron</label>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Step 6: Usage & Storage -->
+            <div class="step" id="step6">
+                <h2 class="step-title">How you'll use your vessel</h2>
+                <p class="step-description">Usage and storage affect your coverage needs and premium calculations.</p>
+
+                <div class="form-group">
+                    <label>Primary Use <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="usage" value="private" id="private">
+                            <label for="private">Private</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="usage" value="charter" id="charter">
+                            <label for="charter">Charter</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="usage" value="liveaboard" id="liveaboard">
+                            <label for="liveaboard">Live Aboard</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Storage Method <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="storage" value="rack" id="rack">
+                            <label for="rack">Rack</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="storage" value="slip" id="slip">
+                            <label for="slip">Slip/Dock</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="storage" value="lift" id="lift">
+                            <label for="lift">Lift</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="storage" value="trailer" id="trailer">
+                            <label for="trailer">Trailer</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Will vessel be financed?</label>
+                    <input type="text" name="financing" placeholder="Bank name or N/A">
+                </div>
+
+                <div class="form-group">
+                    <label>Storage Location</label>
+                    <textarea name="storageLocation" rows="3" placeholder="Marina name and address if different from home address"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 7: Coverage Preferences -->
+            <div class="step" id="step7">
+                <h2 class="step-title">Choose your coverage</h2>
+                <p class="step-description">Select coverage limits that best protect your vessel and peace of mind.</p>
+
+                <div class="form-group">
+                    <label>Vessel Insured Value <span class="required">*</span></label>
+                    <input type="number" name="insuredValue" min="5000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Liability Coverage <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="liability" value="300000" id="lib300">
+                            <label for="lib300">$300K</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="liability" value="500000" id="lib500">
+                            <label for="lib500">$500K</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="liability" value="1000000" id="lib1m">
+                            <label for="lib1m">$1M</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="liability" value="2000000" id="lib2m">
+                            <label for="lib2m">$2M</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Medical Payments</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="medical" value="5000" id="med5k">
+                            <label for="med5k">$5K</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="medical" value="10000" id="med10k">
+                            <label for="med10k">$10K</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="medical" value="25000" id="med25k">
+                            <label for="med25k">$25K</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Bahamas Coverage <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="bahamas" value="yes" id="bahamasYes">
+                            <label for="bahamasYes">Yes Please</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="bahamas" value="no" id="bahamasNo">
+                            <label for="bahamasNo">No Thanks</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 8: Final Details -->
+            <div class="step" id="step8">
+                <h2 class="step-title">Almost there!</h2>
+                <p class="step-description">Just a few more details and we'll have your quote ready.</p>
+
+                <div class="form-group">
+                    <label>Best time to contact you</label>
+                    <input type="text" name="contactTime" placeholder="e.g., Weekday mornings, after 6pm">
+                </div>
+
+                <div class="form-group">
+                    <label>How did you hear about us?</label>
+                    <input type="text" name="referral" placeholder="Google, referral, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label>Current insurance carrier (if any)</label>
+                    <input type="text" name="currentCarrier" placeholder="Current insurance company">
+                </div>
+
+                <div class="form-group">
+                    <label>Additional comments or questions</label>
+                    <textarea name="comments" rows="4" placeholder="Anything else you'd like us to know?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Interested in bundling other insurance?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="bundle" value="yes" id="bundleYes">
+                            <label for="bundleYes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="bundle" value="no" id="bundleNo">
+                            <label for="bundleNo">No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">← Previous</button>
+                <button type="button" class="btn btn-skip" id="skipBtn">Skip</button>
+                <button type="button" class="btn btn-primary" id="nextBtn">Continue →</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="save-indicator" id="saveIndicator">
+        ✓ Progress saved automatically
     </div>
 
     <script>
-        let currentSection = 1;
-        const totalSections = 7;
-        let hideProgressTimer = null;
-        let lastScrollY = window.scrollY;
+        let currentStep = 1;
+        const totalSteps = 8;
+        
+        // Form data storage
+        let formData = JSON.parse(localStorage.getItem('marineInsuranceForm') || '{}');
+        
+        // Motivational messages
+        const motivationalMessages = [
+            "You're doing great! Keep going 🚤",
+            "Excellent progress! Almost there ⚓",
+            "Looking good! Your vessel will be protected 🛡️",
+            "Fantastic! We're getting closer 🌊",
+            "Outstanding! Just a few more steps 🎯",
+            "Amazing progress! Nearly complete ✨",
+            "Superb! Final stretch ahead 🏁",
+            "Perfect! Ready to submit 🎉"
+        ];
 
-        // Progress data
-        const sectionData = {
-            1: { title: "Personal Information", time: "~4 min left", motivation: "Great start! 🚢", progress: 14 },
-            2: { title: "Vessel Details", time: "~3 min left", motivation: "Looking good! ⚓", progress: 28 },
-            3: { title: "Engine Information", time: "~2 min left", motivation: "Halfway there! 🎉", progress: 43 },
-            4: { title: "Experience & Safety", time: "~2 min left", motivation: "You're doing great! 👍", progress: 57 },
-            5: { title: "Usage & Storage", time: "~1 min left", motivation: "Almost there! 🏁", progress: 71 },
-            6: { title: "Coverage Requirements", time: "~30 sec left", motivation: "Final stretch! ⭐", progress: 85 },
-            7: { title: "Final Details", time: "Nearly done!", motivation: "Your quote awaits! 🎯", progress: 100 }
-        };
-
-        // Initialize form
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSavedData();
-            updateProgress();
-            setupTouchEvents();
-            setupProgressHiding();
-            
-            // Set up form validation
-            setupFormValidation();
-        });
-
-        // Progress update function
         function updateProgress() {
-            const data = sectionData[currentSection];
+            const progress = (currentStep / totalSteps) * 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+            document.querySelector('.progress-text').textContent = 
+                `Step ${currentStep} of ${totalSteps} • ${getStepName(currentStep)}`;
             
-            // Update mobile progress
-            document.getElementById('mobileProgressText').textContent = `Step ${currentSection} of ${totalSections}`;
-            document.getElementById('mobileTimeEstimate').textContent = data.time;
-            document.getElementById('mobileMotivationalText').textContent = data.motivation;
-            document.getElementById('mobileProgressFill').style.width = data.progress + '%';
+            // Update motivational message
+            document.querySelector('.motivational-text').textContent = 
+                motivationalMessages[currentStep - 1];
             
-            // Update desktop progress
-            document.getElementById('desktopProgressText').textContent = data.title;
-            document.getElementById('desktopTimeEstimate').textContent = data.time;
-            document.getElementById('desktopMotivationalText').textContent = data.motivation;
-            document.getElementById('desktopProgressPercent').textContent = data.progress + '%';
-            document.getElementById('floatingProgressPercent').textContent = data.progress + '%';
-            
-            // Update circular progress
-            const circumference = 2 * Math.PI * 35;
-            const offset = circumference - (data.progress / 100) * circumference;
-            document.getElementById('desktopProgressCircle').style.strokeDashoffset = offset;
-            
-            // Update step indicators
-            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
-                const step = index + 1;
-                indicator.classList.remove('active', 'completed');
-                
-                if (step < currentSection) {
-                    indicator.classList.add('completed');
-                } else if (step === currentSection) {
-                    indicator.classList.add('active');
+            // Update step dots
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    dot.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    dot.classList.add('active');
                 }
             });
         }
 
-        // Section navigation
-        function showSection(sectionNum) {
-            // Hide all sections
-            document.querySelectorAll('.form-section').forEach(section => {
-                section.classList.add('hidden');
-                section.classList.remove('active');
-            });
+        function getStepName(step) {
+            const names = [
+                'Personal Information',
+                'Address & Demographics', 
+                'Vessel Information',
+                'Engine Details',
+                'Experience & History',
+                'Usage & Storage',
+                'Coverage Preferences',
+                'Final Details'
+            ];
+            return names[step - 1];
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
             
-            // Show target section
-            const targetSection = document.getElementById(`section${sectionNum}`);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-                targetSection.classList.add('active');
-                currentSection = sectionNum;
-                updateProgress();
-                
-                // Celebration effect
-                if (sectionNum > 1) {
-                    document.querySelector('.progress-container').classList.add('celebration');
-                    setTimeout(() => {
-                        document.querySelector('.progress-container').classList.remove('celebration');
-                    }, 500);
-                }
-                
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function nextSection() {
-            if (currentSection < totalSections) {
-                showSection(currentSection + 1);
-            } else {
-                submitForm();
-            }
-        }
-
-        function prevSection() {
-            if (currentSection > 1) {
-                showSection(currentSection - 1);
-            }
-        }
-
-        // Form submission
-        function submitForm() {
-            // Validate required fields in current section
-            const currentSectionEl = document.getElementById(`section${currentSection}`);
-            const requiredFields = currentSectionEl.querySelectorAll('[required]');
-            let isValid = true;
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = step > 1 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = step === totalSteps ? 'Submit Quote →' : 'Continue →';
             
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('error');
-                    isValid = false;
+            updateProgress();
+        }
+
+        function saveFormData() {
+            const form = document.getElementById('marineInsuranceForm');
+            const formData = new FormData(form);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
                 } else {
-                    field.classList.remove('error');
+                    data[key] = value;
+                }
+            }
+            
+            localStorage.setItem('marineInsuranceForm', JSON.stringify(data));
+            
+            // Show save indicator
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => indicator.classList.remove('show'), 2000);
+        }
+
+        function loadFormData() {
+            const data = JSON.parse(localStorage.getItem('marineInsuranceForm') || '{}');
+            
+            Object.keys(data).forEach(key => {
+                const field = document.querySelector(`[name="${key}"]`);
+                if (field) {
+                    if (field.type === 'radio' || field.type === 'checkbox') {
+                        const value = Array.isArray(data[key]) ? data[key] : [data[key]];
+                        value.forEach(v => {
+                            const option = document.querySelector(`[name="${key}"][value="${v}"]`);
+                            if (option) option.checked = true;
+                        });
+                    } else {
+                        field.value = data[key];
+                    }
                 }
             });
+        }
+
+        function validateStep(step) {
+            const stepElement = document.getElementById(`step${step}`);
+            const requiredFields = stepElement.querySelectorAll('[required]');
             
-            if (!isValid) {
-                alert('Please fill in all required fields before submitting.');
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    field.style.borderColor = '#ff3b30';
+                    setTimeout(() => field.style.borderColor = '', 3000);
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Event listeners
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            if (currentStep === totalSteps) {
+                // Submit form
+                saveFormData();
+                alert('Thank you! Your marine insurance quote has been submitted. We\'ll contact you soon with your personalized quote.');
+                localStorage.removeItem('marineInsuranceForm');
                 return;
             }
             
-            // Save form data
-            saveForm();
-            
-            // Show success message
-            document.querySelectorAll('.form-section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById('successSection').classList.remove('hidden');
-            
-            // Hide progress bar
-            document.querySelector('.progress-container').style.display = 'none';
-            document.querySelector('.floating-progress').style.display = 'none';
-        }
-
-        // Save form data to localStorage
-        function saveForm() {
-            const formData = {};
-            
-            // Collect all form inputs
-            document.querySelectorAll('input, select, textarea').forEach(field => {
-                if (field.name || field.id) {
-                    const key = field.name || field.id;
-                    if (field.type === 'checkbox') {
-                        formData[key] = field.checked;
-                    } else if (field.type === 'radio') {
-                        if (field.checked) {
-                            formData[key] = field.value;
-                        }
-                    } else {
-                        formData[key] = field.value;
-                    }
-                }
-            });
-            
-            formData.currentSection = currentSection;
-            formData.savedAt = new Date().toISOString();
-            
-            localStorage.setItem('marineInsuranceForm', JSON.stringify(formData));
-            
-            // Show save confirmation
-            const saveBtn = event.target;
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i class="fas fa-check mr-1"></i>Saved!';
-            saveBtn.classList.add('bg-green-500');
-            
-            setTimeout(() => {
-                saveBtn.innerHTML = originalText;
-                saveBtn.classList.remove('bg-green-500');
-            }, 2000);
-        }
-
-        // Load saved form data
-        function loadSavedData() {
-            const savedData = localStorage.getItem('marineInsuranceForm');
-            if (!savedData) return;
-            
-            try {
-                const formData = JSON.parse(savedData);
-                
-                // Restore form values
-                Object.keys(formData).forEach(key => {
-                    if (key === 'currentSection' || key === 'savedAt') return;
-                    
-                    const field = document.querySelector(`[name="${key}"], [id="${key}"]`);
-                    if (field) {
-                        if (field.type === 'checkbox') {
-                            field.checked = formData[key];
-                        } else if (field.type === 'radio') {
-                            if (field.value === formData[key]) {
-                                field.checked = true;
-                            }
-                        } else {
-                            field.value = formData[key];
-                        }
-                    }
-                });
-                
-                // Restore current section
-                if (formData.currentSection) {
-                    showSection(formData.currentSection);
-                }
-                
-                // Show restore notification
-                if (formData.savedAt) {
-                    const savedDate = new Date(formData.savedAt);
-                    alert(`Form data restored from ${savedDate.toLocaleString()}`);
-                }
-            } catch (error) {
-                console.error('Error loading saved data:', error);
-            }
-        }
-
-        // Reset form
-        function resetForm() {
-            localStorage.removeItem('marineInsuranceForm');
-            location.reload();
-        }
-
-        // Trailer fields toggle
-        function toggleTrailerFields(show) {
-            const trailerFields = document.getElementById('trailerFields');
-            if (show) {
-                trailerFields.classList.remove('hidden');
-            } else {
-                trailerFields.classList.add('hidden');
-            }
-        }
-
-        // Touch and swipe events
-        function setupTouchEvents() {
-            let startY = 0;
-            let startTime = 0;
-            
-            document.addEventListener('touchstart', function(e) {
-                startY = e.touches[0].clientY;
-                startTime = Date.now();
-            });
-            
-            document.addEventListener('touchend', function(e) {
-                const endY = e.changedTouches[0].clientY;
-                const endTime = Date.now();
-                const deltaY = startY - endY;
-                const deltaTime = endTime - startTime;
-                
-                // Swipe up detection
-                if (deltaY > 50 && deltaTime < 300) {
-                    showProgressBar();
-                }
-                
-                // Swipe down detection  
-                if (deltaY < -50 && deltaTime < 300) {
-                    hideProgressBar();
-                }
-            });
-        }
-
-        // Progress bar hiding/showing
-        function setupProgressHiding() {
-            let ticking = false;
-            
-            window.addEventListener('scroll', function() {
-                if (!ticking) {
-                    requestAnimationFrame(function() {
-                        const currentScrollY = window.scrollY;
-                        const progressContainer = document.getElementById('progressContainer');
-                        const floatingProgress = document.getElementById('floatingProgress');
-                        
-                        if (window.innerWidth <= 768) { // Mobile only
-                            if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                                // Scrolling down - hide progress, show floating
-                                progressContainer.classList.add('hidden');
-                                floatingProgress.classList.remove('hidden');
-                            } else if (currentScrollY < lastScrollY) {
-                                // Scrolling up - show progress, hide floating
-                                progressContainer.classList.remove('hidden');
-                                floatingProgress.classList.add('hidden');
-                            }
-                        }
-                        
-                        lastScrollY = currentScrollY;
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-            
-            // Auto-hide after 5 seconds on mobile
-            if (window.innerWidth <= 768) {
-                hideProgressTimer = setTimeout(() => {
-                    const progressContainer = document.getElementById('progressContainer');
-                    const floatingProgress = document.getElementById('floatingProgress');
-                    if (window.scrollY > 50) {
-                        progressContainer.classList.add('hidden');
-                        floatingProgress.classList.remove('hidden');
-                    }
-                }, 5000);
-            }
-        }
-
-        function showProgressBar() {
-            const progressContainer = document.getElementById('progressContainer');
-            const floatingProgress = document.getElementById('floatingProgress');
-            progressContainer.classList.remove('hidden');
-            floatingProgress.classList.add('hidden');
-            
-            // Show swipe indicator
-            const swipeIndicator = document.getElementById('swipeIndicator');
-            swipeIndicator.classList.add('show');
-            setTimeout(() => {
-                swipeIndicator.classList.remove('show');
-            }, 2000);
-        }
-
-        function hideProgressBar() {
-            if (window.innerWidth <= 768) {
-                const progressContainer = document.getElementById('progressContainer');
-                const floatingProgress = document.getElementById('floatingProgress');
-                progressContainer.classList.add('hidden');
-                floatingProgress.classList.remove('hidden');
-            }
-        }
-
-        // Progress toggle
-        document.getElementById('progressToggle')?.addEventListener('click', function() {
-            const icon = this.querySelector('i');
-            const mobileContainer = document.querySelector('.mobile-progress-container');
-            
-            if (icon.classList.contains('fa-chevron-down')) {
-                // Expand
-                icon.classList.remove('fa-chevron-down');
-                icon.classList.add('fa-chevron-up');
-                // Add expanded content here if needed
-            } else {
-                // Collapse
-                icon.classList.remove('fa-chevron-up');
-                icon.classList.add('fa-chevron-down');
+            if (validateStep(currentStep)) {
+                saveFormData();
+                currentStep++;
+                showStep(currentStep);
             }
         });
 
-        // Floating progress click
-        document.getElementById('floatingProgress')?.addEventListener('click', function() {
-            showProgressBar();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
         });
 
-        // Form validation
-        function setupFormValidation() {
-            // Real-time validation
-            document.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
-                field.addEventListener('blur', function() {
-                    if (!this.value.trim()) {
-                        this.classList.add('error');
-                    } else {
-                        this.classList.remove('error');
-                    }
-                });
-                
-                field.addEventListener('input', function() {
-                    if (this.value.trim()) {
-                        this.classList.remove('error');
-                    }
-                });
+        document.getElementById('skipBtn').addEventListener('click', function() {
+            saveFormData();
+            currentStep++;
+            if (currentStep > totalSteps) {
+                currentStep = totalSteps;
+            }
+            showStep(currentStep);
+        });
+
+        // Auto-save on input
+        document.getElementById('marineInsuranceForm').addEventListener('input', function() {
+            clearTimeout(this.saveTimeout);
+            this.saveTimeout = setTimeout(saveFormData, 1000);
+        });
+
+        // Initialize
+        loadFormData();
+        showStep(currentStep);
+
+        // Add smooth focus transitions
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.style.transform = 'translateY(-2px)';
             });
             
-            // Phone number formatting
-            document.querySelectorAll('input[type="tel"]').forEach(field => {
-                field.addEventListener('input', function() {
-                    let value = this.value.replace(/\D/g, '');
-                    if (value.length >= 6) {
-                        value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-                    } else if (value.length >= 3) {
-                        value = value.replace(/(\d{3})(\d{3})/, '($1) $2');
-                    }
-                    this.value = value;
-                });
+            field.addEventListener('blur', function() {
+                this.style.transform = 'translateY(0)';
             });
-        }
-
-        // Auto-save every 30 seconds
-        setInterval(function() {
-            if (currentSection <= totalSections) {
-                saveForm();
-            }
-        }, 30000);
-
-        // Prevent form loss on page unload
-        window.addEventListener('beforeunload', function() {
-            saveForm();
         });
     </script>
 </body>
