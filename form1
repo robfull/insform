@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Marine Insurance Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --success-green: #30D158;
+            --warning-orange: #FF9F0A;
+            --neutral-gray: #8E8E93;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            transition: all 0.3s ease;
+        }
+
+        .progress-ring-fill {
+            transition: stroke-dashoffset 0.3s ease;
+            stroke-linecap: round;
+        }
+
+        .section-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .section-card.active {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+        }
+
+        .section-card.completed {
+            background: linear-gradient(135deg, #30D158 0%, #34C759 100%);
+            color: white;
+        }
+
+        .step-indicator {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #E5E5EA;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+
+        .step-indicator.completed::after {
+            background: var(--success-green);
+        }
+
+        .step-indicator.active {
+            transform: scale(1.1);
+        }
+
+        .celebration {
+            animation: celebrate 0.6s ease-in-out;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0,122,255,0.3); }
+            50% { box-shadow: 0 0 20px rgba(0,122,255,0.6), 0 0 30px rgba(0,122,255,0.4); }
+        }
+
+        .form-input {
+            transition: all 0.2s ease;
+            border: 1px solid #D1D1D6;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+            outline: none;
+        }
+
+        .motivational-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        .time-estimate {
+            background: rgba(0,122,255,0.1);
+            border: 1px solid rgba(0,122,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+            .step-indicator::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header with Progress -->
+    <div class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Marine Insurance Application</h1>
+                <p class="text-gray-600">Get your personalized quote in just a few steps</p>
+            </div>
+
+            <!-- Main Progress Circle -->
+            <div class="flex items-center justify-center mb-6">
+                <div class="relative">
+                    <svg class="w-24 h-24 progress-ring" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="#E5E5EA" stroke-width="8"/>
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="url(#progressGradient)" stroke-width="8" 
+                                class="progress-ring-fill" id="progressCircle"
+                                stroke-dasharray="339.292" stroke-dashoffset="339.292"/>
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#007AFF"/>
+                                <stop offset="100%" style="stop-color:#5856D6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-900" id="progressPercentage">0%</div>
+                            <div class="text-xs text-gray-500">complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Estimate & Motivational Message -->
+            <div class="text-center mb-6">
+                <div class="time-estimate inline-block px-4 py-2 rounded-full text-sm font-medium text-blue-700 mb-2" id="timeEstimate">
+                    <i class="far fa-clock mr-1"></i>~5 minutes remaining
+                </div>
+                <p class="motivational-message text-lg" id="motivationalMessage">
+                    Let's get started! This will be quick and easy 🚢
+                </p>
+            </div>
+
+            <!-- Step Indicators -->
+            <div class="flex justify-center items-center space-x-4 overflow-x-auto pb-2">
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white text-sm font-medium active" data-step="0">
+                    1
+                </div>
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-medium" data-step="1">
+                    2
+                </div>
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-medium" data-step="2">
+                    3
+                </div>
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-medium" data-step="3">
+                    4
+                </div>
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-medium" data-step="4">
+                    5
+                </div>
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-medium" data-step="5">
+                    6
+                </div>
+                <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 text-sm font-medium" data-step="6">
+                    7
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <form id="marineInsuranceForm">
+            <!-- Section 1: Personal Information -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 active slide-in" id="section-0">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Personal Information</h2>
+                        <p class="text-gray-600 text-sm">Let's start with your basic details</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name or LLC *</label>
+                        <input type="text" name="name" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                        <input type="tel" name="phone" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                        <input type="email" name="email" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
+                        <input type="date" name="dob" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Occupation *</label>
+                        <input type="text" name="occupation" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="font-semibold text-gray-900 mb-4">Address *</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <input type="text" name="street1" placeholder="Street Address" required class="form-input w-full p-3 rounded-lg">
+                        </div>
+                        <div class="md:col-span-2">
+                            <input type="text" name="street2" placeholder="Street Address Line 2" class="form-input w-full p-3 rounded-lg">
+                        </div>
+                        <div>
+                            <input type="text" name="city" placeholder="City" required class="form-input w-full p-3 rounded-lg">
+                        </div>
+                        <div>
+                            <input type="text" name="state" placeholder="State / Province" required class="form-input w-full p-3 rounded-lg">
+                        </div>
+                        <div>
+                            <input type="text" name="zip" placeholder="Postal / Zip Code" required class="form-input w-full p-3 rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" class="px-6 py-3 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        <i class="fas fa-save mr-2"></i>Save Draft
+                    </button>
+                    <button type="button" onclick="nextSection()" class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium pulse-glow">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 2: Vessel Details -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 hidden" id="section-1">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-ship"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Vessel Details</h2>
+                        <p class="text-gray-600 text-sm">Tell us about your watercraft</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Year of Vessel *</label>
+                        <input type="number" name="vesselYear" min="1900" max="2024" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Length of Vessel *</label>
+                        <input type="text" name="vesselLength" required class="form-input w-full p-3 rounded-lg" placeholder="e.g. 24 feet">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Make of Vessel *</label>
+                        <input type="text" name="vesselMake" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Model of Vessel *</label>
+                        <input type="text" name="vesselModel" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hull ID #</label>
+                        <input type="text" name="hullId" class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Price *</label>
+                        <input type="number" name="purchasePrice" required class="form-input w-full p-3 rounded-lg" placeholder="$">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hull Material</label>
+                        <select name="hullMaterial" class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select material</option>
+                            <option value="fiberglass">Fiberglass</option>
+                            <option value="aluminum">Aluminum</option>
+                            <option value="steel">Steel</option>
+                            <option value="wood">Wood</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="previousSection()" class="px-6 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button type="button" onclick="nextSection()" class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 3: Engine Information -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 hidden" id="section-2">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Engine Specifications</h2>
+                        <p class="text-gray-600 text-sm">Engine details and power specifications</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Number of Engines *</label>
+                        <select name="numEngines" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Make of Engines *</label>
+                        <input type="text" name="engineMake" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Horsepower (Each Engine) *</label>
+                        <input type="number" name="engineHP" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Model Year of Engines *</label>
+                        <input type="number" name="engineYear" min="1900" max="2024" required class="form-input w-full p-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fuel Type *</label>
+                        <select name="fuelType" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="gasoline">Gasoline</option>
+                            <option value="diesel">Diesel</option>
+                            <option value="electric">Electric</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Engine Type *</label>
+                        <select name="engineType" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="outboard">Outboard</option>
+                            <option value="inboard">Inboard</option>
+                            <option value="sterndrive">Sterndrive</option>
+                            <option value="jet">Jet Drive</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="previousSection()" class="px-6 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button type="button" onclick="nextSection()" class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 4: Experience & Safety -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 hidden" id="section-3">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-life-ring"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Experience & Safety</h2>
+                        <p class="text-gray-600 text-sm">Your boating background and safety record</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Previous Watercraft Experience *</label>
+                        <select name="previousExperience" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="owned">Previously Owned</option>
+                            <option value="operated">Previously Operated</option>
+                            <option value="both">Owned and Operated</option>
+                            <option value="none">No Previous Experience</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Details of Previous Experience</label>
+                        <textarea name="experienceDetails" class="form-input w-full p-3 rounded-lg" rows="3" placeholder="e.g. Owned 24ft Cobia - 6 years"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Any Claims or Losses in Past 5 Years? *</label>
+                        <select name="pastClaims" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Safety Courses or Licenses</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="safetyCourses[]" value="uscg" class="mr-2">
+                                <span>USCG Safety Course</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="safetyCourses[]" value="power_squadron" class="mr-2">
+                                <span>Power Squadron</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="safetyCourses[]" value="captains_license" class="mr-2">
+                                <span>Captain's License</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="previousSection()" class="px-6 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button type="button" onclick="nextSection()" class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 5: Usage & Storage -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 hidden" id="section-4">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-anchor"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Usage & Storage</h2>
+                        <p class="text-gray-600 text-sm">How and where you'll use your vessel</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">How Will Watercraft Be Used? *</label>
+                        <select name="usage" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select usage</option>
+                            <option value="private">Private Use</option>
+                            <option value="private_light_charter">Private with Light Charter</option>
+                            <option value="full_charter">Full Time Charter</option>
+                            <option value="charter_6pack">Charter (6-Pack)</option>
+                            <option value="live_aboard">Live-Aboard</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">How Is Watercraft Stored? *</label>
+                        <select name="storage" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select storage method</option>
+                            <option value="marina_slip">Marina Slip</option>
+                            <option value="dry_stack">Dry Stack</option>
+                            <option value="trailer">Trailer</option>
+                            <option value="mooring">Mooring</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Storage Address (if different from home)</label>
+                        <textarea name="storageAddress" class="form-input w-full p-3 rounded-lg" rows="2" placeholder="Marina name and address"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="previousSection()" class="px-6 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button type="button" onclick="nextSection()" class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 6: Coverage Requirements -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 hidden" id="section-5">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Coverage Requirements</h2>
+                        <p class="text-gray-600 text-sm">Insurance coverage details and limits</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Insured Value of Watercraft (minus trailer) *</label>
+                        <input type="number" name="insuredValue" required class="form-input w-full p-3 rounded-lg" placeholder="$">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Liability Limits *</label>
+                        <select name="liabilityLimits" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select limits</option>
+                            <option value="300000">$300,000</option>
+                            <option value="500000">$500,000</option>
+                            <option value="1000000">$1,000,000</option>
+                            <option value="2000000">$2,000,000</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Medical Payments</label>
+                        <select name="medicalPayments" class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select amount</option>
+                            <option value="5000">$5,000</option>
+                            <option value="10000">$10,000</option>
+                            <option value="25000">$25,000</option>
+                            <option value="50000">$50,000</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Personal Effects Coverage</label>
+                        <input type="number" name="personalEffects" class="form-input w-full p-3 rounded-lg" placeholder="$">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Bahamas Coverage? *</label>
+                        <select name="bahamasCoverage" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="previousSection()" class="px-6 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button type="button" onclick="nextSection()" class="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        Continue <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 7: Final Details -->
+            <div class="section-card bg-white rounded-xl shadow-lg p-6 mb-8 hidden" id="section-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Final Details</h2>
+                        <p class="text-gray-600 text-sm">Last few details to complete your application</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Would you like your trailer insured? *</label>
+                        <select name="trailerInsurance" required class="form-input w-full p-3 rounded-lg">
+                            <option value="">Select</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="no_trailer">No Trailer</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Will watercraft be financed?</label>
+                        <input type="text" name="financing" class="form-input w-full p-3 rounded-lg" placeholder="Bank name or N/A">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Best time to reach you</label>
+                        <input type="text" name="bestTime" class="form-input w-full p-3 rounded-lg" placeholder="e.g. Weekdays 9AM-5PM">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">How did you hear about us?</label>
+                        <textarea name="referral" class="form-input w-full p-3 rounded-lg" rows="2" placeholder="Referral source and current insurance details"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Additional Comments</label>
+                        <textarea name="comments" class="form-input w-full p-3 rounded-lg" rows="3" placeholder="Any special requests or questions?"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="smsOptIn" class="mr-2">
+                            <span class="text-sm text-gray-700">Yes! Stacks Brokerage may text me throughout the insurance quoting, servicing, claims, and renewal processes</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="previousSection()" class="px-6 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button type="submit" class="px-8 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium pulse-glow">
+                        <i class="fas fa-paper-plane mr-2"></i>Submit Application
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden text-center py-12">
+            <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 celebration">
+                <i class="fas fa-check text-white text-3xl"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Application Submitted! 🎉</h2>
+            <p class="text-xl text-gray-600 mb-6">Thank you for choosing Stacks Brokerage. We'll review your application and get back to you within 24 hours with your personalized quote.</p>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto">
+                <p class="text-blue-800 font-medium">What happens next?</p>
+                <ul class="text-blue-700 text-sm mt-2 space-y-1">
+                    <li>✓ Application review (within 2 hours)</li>
+                    <li>✓ Quote preparation (same day)</li>
+                    <li>✓ Personal consultation call</li>
+                    <li>✓ Policy activation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const totalSections = 7;
+        const sectionWeights = [20, 15, 15, 15, 10, 15, 10]; // Front-loaded progress
+        
+        const motivationalMessages = [
+            "Let's get started! This will be quick and easy 🚢",
+            "Great start! Tell us about your vessel 🛥️",
+            "Halfway there! Engine details next ⚙️",
+            "Excellent progress! Almost done 🎯",
+            "You're doing great! Just a few more steps 🌟",
+            "Nearly finished! Coverage details 🛡️",
+            "Final stretch! You're almost done 🏁"
+        ];
+
+        const timeEstimates = [
+            "~5 minutes remaining",
+            "~4 minutes remaining", 
+            "~3 minutes remaining",
+            "~2 minutes remaining",
+            "~2 minutes remaining",
+            "~1 minute remaining",
+            "~30 seconds remaining"
+        ];
+
+        function updateProgress() {
+            const progress = sectionWeights.slice(0, currentSection + 1).reduce((sum, weight) => sum + weight, 0);
+            const progressCircle = document.getElementById('progressCircle');
+            const circumference = 339.292;
+            const offset = circumference - (progress / 100) * circumference;
+            
+            progressCircle.style.strokeDashoffset = offset;
+            document.getElementById('progressPercentage').textContent = progress + '%';
+            document.getElementById('motivationalMessage').textContent = motivationalMessages[currentSection];
+            document.getElementById('timeEstimate').innerHTML = `<i class="far fa-clock mr-1"></i>${timeEstimates[currentSection]}`;
+
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('active', 'completed');
+                if (index < currentSection) {
+                    indicator.classList.add('completed');
+                    indicator.innerHTML = '<i class="fas fa-check"></i>';
+                    indicator.classList.add('bg-green-500', 'text-white');
+                    indicator.classList.remove('bg-gray-300', 'bg-blue-500', 'text-gray-600');
+                } else if (index === currentSection) {
+                    indicator.classList.add('active');
+                    indicator.classList.add('bg-blue-500', 'text-white');
+                    indicator.classList.remove('bg-gray-300', 'text-gray-600');
+                } else {
+                    indicator.classList.add('bg-gray-300', 'text-gray-600');
+                    indicator.classList.remove('bg-blue-500', 'bg-green-500', 'text-white');
+                    indicator.textContent = index + 1;
+                }
+            });
+
+            // Celebration effects
+            if (currentSection > 0 && currentSection % 2 === 0) {
+                showCelebration();
+            }
+        }
+
+        function showCelebration() {
+            const messages = [
+                "Great job! You're making excellent progress! 🎉",
+                "Awesome! You're over halfway done! 🌟",
+                "Fantastic! Almost there! 🚀"
+            ];
+            
+            const celebrationDiv = document.createElement('div');
+            celebrationDiv.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white px-8 py-4 rounded-lg shadow-2xl z-50 celebration';
+            celebrationDiv.innerHTML = `<div class="text-center"><div class="text-2xl mb-2">🎉</div><div class="font-medium">${messages[Math.floor(currentSection/2) - 1] || messages[0]}</div></div>`;
+            
+            document.body.appendChild(celebrationDiv);
+            
+            setTimeout(() => {
+                celebrationDiv.remove();
+            }, 2000);
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                // Hide current section
+                document.getElementById(`section-${currentSection}`).classList.add('hidden');
+                document.getElementById(`section-${currentSection}`).classList.remove('active');
+                
+                currentSection++;
+                
+                // Show next section
+                document.getElementById(`section-${currentSection}`).classList.remove('hidden');
+                document.getElementById(`section-${currentSection}`).classList.add('active', 'slide-in');
+                
+                updateProgress();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                // Hide current section
+                document.getElementById(`section-${currentSection}`).classList.add('hidden');
+                document.getElementById(`section-${currentSection}`).classList.remove('active');
+                
+                currentSection--;
+                
+                // Show previous section
+                document.getElementById(`section-${currentSection}`).classList.remove('hidden');
+                document.getElementById(`section-${currentSection}`).classList.add('active', 'slide-in');
+                
+                updateProgress();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Form submission
+        document.getElementById('marineInsuranceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Hide form
+            document.querySelectorAll('.section-card').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show success message
+            document.getElementById('successMessage').classList.remove('hidden');
+            document.getElementById('successMessage').classList.add('slide-in');
+            
+            // Update progress to 100%
+            document.getElementById('progressCircle').style.strokeDashoffset = '0';
+            document.getElementById('progressPercentage').textContent = '100%';
+            document.getElementById('motivationalMessage').textContent = 'Application Complete! 🎉';
+            document.getElementById('timeEstimate').innerHTML = '<i class="fas fa-check-circle mr-1 text-green-500"></i>Completed';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Save draft functionality
+        function saveDraft() {
+            const formData = new FormData(document.getElementById('marineInsuranceForm'));
+            const data = Object.fromEntries(formData.entries());
+            data.currentSection = currentSection;
+            
+            localStorage.setItem('marineInsuranceDraft', JSON.stringify(data));
+            
+            // Show save confirmation
+            const saveMsg = document.createElement('div');
+            saveMsg.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 bounce-in';
+            saveMsg.innerHTML = '<i class="fas fa-check mr-2"></i>Draft saved successfully!';
+            document.body.appendChild(saveMsg);
+            
+            setTimeout(() => {
+                saveMsg.remove();
+            }, 3000);
+        }
+
+        // Load draft on page load
+        function loadDraft() {
+            const savedData = localStorage.getItem('marineInsuranceDraft');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                // Fill form fields
+                Object.keys(data).forEach(key => {
+                    if (key !== 'currentSection') {
+                        const field = document.querySelector(`[name="${key}"]`);
+                        if (field) {
+                            if (field.type === 'checkbox') {
+                                field.checked = data[key] === field.value;
+                            } else {
+                                field.value = data[key];
+                            }
+                        }
+                    }
+                });
+                
+                // Go to saved section
+                if (data.currentSection && data.currentSection > 0) {
+                    currentSection = parseInt(data.currentSection);
+                    document.getElementById('section-0').classList.add('hidden');
+                    document.getElementById('section-0').classList.remove('active');
+                    document.getElementById(`section-${currentSection}`).classList.remove('hidden');
+                    document.getElementById(`section-${currentSection}`).classList.add('active');
+                    updateProgress();
+                }
+            }
+        }
+
+        // Add save draft listeners
+        document.querySelectorAll('button[type="button"]').forEach(btn => {
+            if (btn.textContent.includes('Save Draft')) {
+                btn.addEventListener('click', saveDraft);
+            }
+        });
+
+        // Auto-save every 30 seconds
+        setInterval(saveDraft, 30000);
+
+        // Initialize
+        updateProgress();
+        loadDraft();
+
+        // Add smooth input animations
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('relative');
+            });
+        });
+    </script>
+</body>
+</html>
